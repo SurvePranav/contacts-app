@@ -18,3 +18,12 @@ final class AuthFailureState extends AuthState {
   final String message;
   const AuthFailureState({required this.message});
 }
+
+final class AuthLoggedOutState extends AuthState {}
+
+final class InitialCheckingState extends AuthState {}
+
+final class LogoutFailureState extends AuthState {
+  final String message;
+  const LogoutFailureState({required this.message});
+}

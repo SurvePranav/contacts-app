@@ -4,17 +4,7 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initAuth();
-  // _initBlog();
-  // final supabase = await Supabase.initialize(
-  //   url: AppSecrets.supabasetUrl,
-  //   anonKey: AppSecrets.supabaseSecretKey,
-  // );
-
-  // serviceLocator.registerLazySingleton(() => supabase.client);
-
-  // hive
-  // Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
-  // serviceLocator.registerLazySingleton<Box>(() => Hive.box(name: 'blogs'));
+  _initHome();
 
   // core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
@@ -56,45 +46,70 @@ void _initAuth() {
     () => CurrentUser(authRepository: serviceLocator<AuthRepository>()),
   );
 
+  serviceLocator.registerFactory(
+    () => UserLogout(authRepository: serviceLocator<AuthRepository>()),
+  );
+
   serviceLocator.registerLazySingleton(
     () => AuthBloc(
       userSignUp: serviceLocator<UserSignUp>(),
       userLogin: serviceLocator<UserLogin>(),
       currentUser: serviceLocator<CurrentUser>(),
       appUserCubit: serviceLocator<AppUserCubit>(),
+      userLogout: serviceLocator<UserLogout>(),
     ),
   );
 }
 
-// void _initBlog() {
-//   // datasource
-//   serviceLocator
-//       .registerFactory<BlogRemoteDataSource>(() => BlogRemoteDataSourceImpl(
-//             supabaseClient: serviceLocator<SupabaseClient>(),
-//           ));
-//   serviceLocator
-//       .registerFactory<BlogLocalDataSource>(() => BlogLocalDataSourceImpl(
-//             box: serviceLocator<Box>(),
-//           ));
+void _initHome() {
+  // datasource
+  serviceLocator.registerFactory<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(
+      firebaseAuth: FirebaseAuth.instance,
+      firestore: FirebaseFirestore.instance,
+    ),
+  );
 
-//   // repo
-//   serviceLocator.registerFactory<BlogRepository>(() => BlogRepoImpl(
-//         blogRemoteDataSource: serviceLocator<BlogRemoteDataSource>(),
-//         blogLocalDataSource: serviceLocator<BlogLocalDataSource>(),
-//         connectionChecker: serviceLocator<ConnectionChecker>(),
-//       ));
+  // repo
+  serviceLocator.registerFactory<HomeRepository>(
+    () => HomeRepositoryImpl(
+      connectionChecker: serviceLocator<ConnectionChecker>(),
+      remoteDataSource: serviceLocator<HomeRemoteDataSource>(),
+    ),
+  );
 
-//   // usecases
-//   serviceLocator.registerFactory(() => UploadBlog(
-//         blogRepository: serviceLocator<BlogRepository>(),
-//       ));
-//   serviceLocator.registerFactory(() => GetAllBlogs(
-//         blogRepository: serviceLocator<BlogRepository>(),
-//       ));
+  // usecases
+  serviceLocator.registerFactory(
+    () =>
+        AddRemoveFavouriteUc(homeRepository: serviceLocator<HomeRepository>()),
+  );
+  serviceLocator.registerFactory(
+    () => GetAllContactsUc(homeRepository: serviceLocator<HomeRepository>()),
+  );
+  serviceLocator.registerFactory(
+    () => GetFavouriteContactsUc(
+      homeRepository: serviceLocator<HomeRepository>(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => UpdateContactUc(homeRepository: serviceLocator<HomeRepository>()),
+  );
+  serviceLocator.registerFactory(
+    () => DeleteContactUc(homeRepository: serviceLocator<HomeRepository>()),
+  );
+  serviceLocator.registerFactory(
+    () => CreateContactUc(homeRepository: serviceLocator<HomeRepository>()),
+  );
 
-//   // bloc
-//   serviceLocator.registerLazySingleton(() => BlogBloc(
-//         uploadBlog: serviceLocator<UploadBlog>(),
-//         getAllBlogs: serviceLocator<GetAllBlogs>(),
-//       ));
-// }
+  // bloc
+  serviceLocator.registerLazySingleton(
+    () => HomeBloc(
+      addRemoveFavouriteUc: serviceLocator<AddRemoveFavouriteUc>(),
+      getAllContactsUc: serviceLocator<GetAllContactsUc>(),
+      getFavouriteContactsUc: serviceLocator<GetFavouriteContactsUc>(),
+      updateContactUc: serviceLocator<UpdateContactUc>(),
+      deleteContactUc: serviceLocator<DeleteContactUc>(),
+      createContactUc: serviceLocator<CreateContactUc>(),
+    ),
+  );
+}

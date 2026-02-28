@@ -1,13 +1,16 @@
+import 'package:contacts_app/app/core/common/widgets/loader.dart';
 import 'package:contacts_app/app/core/theme/app_palette.dart';
 import 'package:flutter/material.dart';
 
 class AuthButton extends StatelessWidget {
   final String childText;
   final VoidCallback onPressed;
+  final bool isLoading;
   const AuthButton({
     super.key,
     required this.childText,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -23,17 +26,25 @@ class AuthButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppPallete.transparentColor,
           elevation: 0,
           padding: const EdgeInsets.all(20),
         ),
-        child: Text(
-          childText,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        child: Center(
+          child: SizedBox(
+            height: 30,
+
+            child: isLoading
+                ? SizedBox(height: 30, width: 30, child: Loader())
+                : Text(
+                    childText,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
         ),
       ),
     );

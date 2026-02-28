@@ -17,6 +17,8 @@ abstract interface class AuthRemoteDataSource {
   });
 
   Future<UserModel?> getCurrentUserData();
+
+  Future<void> logout();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -97,6 +99,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final userDoc = await firestore.collection('users').doc(user.uid).get();
 
       return UserModel.fromJson(userDoc.data()!);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      await firebaseAuth.signOut();
     } catch (e) {
       throw ServerException(e.toString());
     }

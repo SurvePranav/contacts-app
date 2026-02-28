@@ -6,8 +6,19 @@ import 'package:contacts_app/app/features/auth/data/repositories/auth_repository
 import 'package:contacts_app/app/features/auth/domain/repository/auth_repository.dart';
 import 'package:contacts_app/app/features/auth/domain/usecases/current_user.dart';
 import 'package:contacts_app/app/features/auth/domain/usecases/user_login.dart';
+import 'package:contacts_app/app/features/auth/domain/usecases/user_logout.dart';
 import 'package:contacts_app/app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:contacts_app/app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:contacts_app/app/features/home/data/datasource/datasource.dart';
+import 'package:contacts_app/app/features/home/data/repository/repository_impl.dart';
+import 'package:contacts_app/app/features/home/domain/repository/home_repository.dart';
+import 'package:contacts_app/app/features/home/domain/usecases/add_remove_favourite_uc.dart';
+import 'package:contacts_app/app/features/home/domain/usecases/create_contact_uc.dart';
+import 'package:contacts_app/app/features/home/domain/usecases/delete_contact_uc.dart';
+import 'package:contacts_app/app/features/home/domain/usecases/get_all_contacts_uc.dart';
+import 'package:contacts_app/app/features/home/domain/usecases/get_favourite_contacts_uc.dart';
+import 'package:contacts_app/app/features/home/domain/usecases/update_contact_uc.dart';
+import 'package:contacts_app/app/features/home/presentation/bloc/home_bloc.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';

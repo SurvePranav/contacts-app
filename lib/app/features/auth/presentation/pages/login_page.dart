@@ -1,16 +1,16 @@
-import 'package:contacts_app/app/core/common/widgets/loader.dart';
 import 'package:contacts_app/app/core/theme/app_palette.dart';
 import 'package:contacts_app/app/core/utils/show_snackbar.dart';
 import 'package:contacts_app/app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:contacts_app/app/features/auth/presentation/pages/signup_page.dart';
 import 'package:contacts_app/app/features/auth/presentation/widgets/auth_button.dart';
 import 'package:contacts_app/app/features/auth/presentation/widgets/auth_field.dart';
-// import 'package:contacts_app/app/features/blogs/presentation/pages/home_page.dart';
+import 'package:contacts_app/app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const LoginPage());
+  static MaterialPageRoute<dynamic> route() =>
+      MaterialPageRoute(builder: (context) => const LoginPage());
   const LoginPage({super.key});
 
   @override
@@ -39,23 +39,18 @@ class _LoginPageState extends State<LoginPage> {
             if (state is AuthFailureState) {
               showSnackBar(context, state.message);
             } else if (state is AuthSuccessState) {
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   HomePage.route(),
-              //   (route) => false,
-              // );
+              showSnackBar(context, "Logged in successfully");
+              Navigator.pushAndRemoveUntil(
+                context,
+                HomePage.route(),
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {
-            if (state is AuthLoadingState) {
-              return const Loader();
-            }
-            if (state is AuthSuccessState) {
-              // return const HomePage();
-              return Scaffold();
-            } else {
-              return Form(
-                key: formKey,
+            return Form(
+              key: formKey,
+              child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -76,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 20),
                     AuthButton(
                       childText: 'Sign In',
+                      isLoading: state is AuthLoadingState,
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           context.read<AuthBloc>().add(
@@ -106,8 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-              );
-            }
+              ),
+            );
           },
         ),
       ),

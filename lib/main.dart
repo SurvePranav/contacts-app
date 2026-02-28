@@ -1,5 +1,6 @@
 import 'package:contacts_app/app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:contacts_app/app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:contacts_app/app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:contacts_app/app/my_app.dart';
 import 'package:contacts_app/init_dependencies/init_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,13 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await initDependencies();
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (context) => serviceLocator<AuthBloc>()),
+        BlocProvider(create: (context) => serviceLocator<HomeBloc>()),
       ],
       child: const MyApp(),
     ),
