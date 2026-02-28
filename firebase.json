@@ -1,0 +1,33 @@
+{
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-east1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "contacts-app-e9e9d",
+          "appId": "1:810501741002:android:e6aa7901acff856899d733",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "contacts-app-e9e9d",
+          "configurations": {
+            "android": "1:810501741002:android:e6aa7901acff856899d733",
+            "ios": "1:810501741002:ios:623af7a539405f2899d733"
+          }
+        }
+      }
+    }
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true
+    }
+  }
+}
