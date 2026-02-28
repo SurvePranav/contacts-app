@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:contacts_app/app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:contacts_app/app/core/usecase/usecase.dart';
@@ -70,13 +71,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthIsUserLoggedIn event,
     Emitter<AuthState> emit,
   ) async {
-    emit(InitialCheckingState());
+    log("checking what is wrong");
+    _appUserCubit.updateUser(null, isChecking: true);
     final res = await _currentUser(NoParams());
 
-    res.fold(
-      (l) => emit(AuthLoggedOutState()),
-      (r) => _emitAuthSuccess(r, emit),
-    );
+    res.fold((l) {
+      _appUserCubit.updateUser(null);
+      emit(AuthLoggedOutState());
+    }, (r) => _emitAuthSuccess(r, emit));
   }
 
   void _emitAuthSuccess(User user, Emitter<AuthState> emit) {

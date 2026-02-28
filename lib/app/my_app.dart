@@ -27,23 +27,14 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'My Contacts',
       theme: AppTheme.darkThemeMode,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, isLoggedIn) {
-          if (isLoggedIn) {
+      home: BlocBuilder<AppUserCubit, AppUserState>(
+        builder: (context, state) {
+          if (state is AppUserLoggedIn) {
             return const HomePage();
+          } else if (state is AppUserLoading) {
+            return const SplashScreen();
           }
-          return BlocBuilder<AuthBloc, AuthState>(
-            buildWhen: (previous, current) => current is InitialCheckingState,
-            builder: (context, state) {
-              if (state is InitialCheckingState) {
-                return const SplashScreen();
-              }
-              return const LoginPage();
-            },
-          );
+          return const LoginPage();
         },
       ),
     );

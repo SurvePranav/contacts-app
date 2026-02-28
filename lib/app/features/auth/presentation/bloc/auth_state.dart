@@ -21,8 +21,6 @@ final class AuthFailureState extends AuthState {
 
 final class AuthLoggedOutState extends AuthState {}
 
-final class InitialCheckingState extends AuthState {}
-
 final class LogoutFailureState extends AuthState {
   final String message;
   const LogoutFailureState({required this.message});
