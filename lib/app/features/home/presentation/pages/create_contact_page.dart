@@ -96,10 +96,18 @@ class _CreateContactPageState extends State<CreateContactPage> {
       phone: phone,
       initials: initials,
       color: selectedColor,
-      id: "",
+      id: widget.isUpdating
+          ? contact.id
+          : "${DateTime.now().millisecondsSinceEpoch}",
       isFavourite: isFavourite,
       emailId: email,
     );
+
+    if (widget.isUpdating) {
+      context.read<HomeBloc>().add(UpdateContactEvent(contact: contact));
+    } else {
+      context.read<HomeBloc>().add(CreateContactEvent(contact: contact));
+    }
   }
 
   @override
@@ -112,9 +120,8 @@ class _CreateContactPageState extends State<CreateContactPage> {
           current.createUpdateContactStatus,
       listener: (context, state) {
         if (state.createUpdateContactStatus == BlocStatus.success) {
-          Navigator.of(
-            context,
-          ).pushReplacement(ContactDetailsPage.route(contact));
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.of(context).push(ContactDetailsPage.route(contact));
         } else if (state.createUpdateContactStatus == BlocStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -153,12 +160,7 @@ class _CreateContactPageState extends State<CreateContactPage> {
                     hintText: "Name",
                     icon: Icons.person,
                   ),
-                  const SizedBox(height: 16),
-                  CommonTextField(
-                    controller: _emailController,
-                    hintText: "Email",
-                    icon: Icons.email,
-                  ),
+
                   const SizedBox(height: 16),
                   CommonTextField(
                     controller: _phoneController,
@@ -166,55 +168,81 @@ class _CreateContactPageState extends State<CreateContactPage> {
                     icon: Icons.phone,
                     keyboardType: TextInputType.phone,
                   ),
+                  const SizedBox(height: 16),
+                  CommonTextField(
+                    controller: _emailController,
+                    hintText: "Email",
+                    icon: Icons.email,
+                  ),
                 ],
               ),
             ),
 
             /// Bottom Buttons
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: bottomInset,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                color: AppPallete.borderColor,
-                child: SafeArea(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppPallete.borderColor,
-                            elevation: 0,
+            BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                return Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: bottomInset,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    color: AppPallete.borderColor,
+                    child: SafeArea(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppPallete.borderColor,
+                                elevation: 0,
+                              ),
+                              onPressed:
+                                  state.createUpdateContactStatus ==
+                                      BlocStatus.loading
+                                  ? null
+                                  : () {
+                                      Navigator.of(context).pop();
+                                    },
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
                           ),
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text(
-                            "Cancel",
-                            style: TextStyle(fontSize: 18),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppPallete.borderColor,
+                                elevation: 0,
+                              ),
+                              onPressed:
+                                  state.createUpdateContactStatus ==
+                                      BlocStatus.loading
+                                  ? null
+                                  : _onSave,
+                              child:
+                                  state.createUpdateContactStatus ==
+                                      BlocStatus.loading
+                                  ? CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : Text(
+                                      widget.isUpdating ? "Update" : "Save",
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppPallete.borderColor,
-                            elevation: 0,
-                          ),
-                          onPressed: _onSave,
-                          child: Text(
-                            widget.isUpdating ? "Update" : "Save",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),

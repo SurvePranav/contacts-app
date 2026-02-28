@@ -35,9 +35,6 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     return firestore.collection('users').doc(uid).collection('contacts');
   }
 
-  // ==========================================================
-  // ADD CONTACT
-  // ==========================================================
   @override
   Future<void> addContact(ContactModel contact) async {
     try {
@@ -47,7 +44,6 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         throw ServerException('Name and phone number are required');
       }
 
-      // 🔎 Check if phone already exists
       final existing = await _contactsRef(
         uid,
       ).where('phone', isEqualTo: contact.phone).get();
@@ -56,37 +52,27 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         throw ServerException('Contact with this phone number already exists');
       }
 
-      final contactId = DateTime.now().millisecondsSinceEpoch.toString();
-
-      final newContact = contact.copyWith(id: contactId);
-
-      await _contactsRef(uid).doc(contactId).set(newContact.toJson());
+      await _contactsRef(uid).doc(contact.id).set(contact.toJson());
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
-  // ==========================================================
-  // GET ALL CONTACTS
-  // ==========================================================
   @override
   Future<List<ContactModel>> getAllContacts() async {
     try {
       final uid = _getUid();
-
       final snapshot = await _contactsRef(uid).orderBy('name').get();
-
-      return snapshot.docs
+      final contacts = snapshot.docs
           .map((doc) => ContactModel.fromJson(doc.data()))
           .toList();
+
+      return contacts;
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
-  // ==========================================================
-  // GET FAVOURITES
-  // ==========================================================
   @override
   Future<List<ContactModel>> getFavouriteContats() async {
     try {

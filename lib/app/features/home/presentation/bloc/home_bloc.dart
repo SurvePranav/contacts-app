@@ -45,6 +45,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetFavouriteContactsEvent>(_onGetFavouriteContacts);
   }
 
+  void _getContacts() {
+    add(const GetAllContactsEvent());
+    add(const GetFavouriteContactsEvent());
+  }
+
   FutureOr<void> _onAddRemoveFavourite(
     AddRemoveFavouriteEvent event,
     Emitter<HomeState> emit,
@@ -62,8 +67,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           errorMessage: failure.message,
         ),
       ),
-      (success) =>
-          emit(state.copyWith(favouriteContactsStatus: BlocStatus.success)),
+      (success) {
+        emit(state.copyWith(favouriteContactsStatus: BlocStatus.success));
+        _getContacts();
+      },
     );
   }
 
@@ -82,8 +89,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           errorMessage: failure.message,
         ),
       ),
-      (success) =>
-          emit(state.copyWith(createUpdateContactStatus: BlocStatus.success)),
+      (success) {
+        emit(state.copyWith(createUpdateContactStatus: BlocStatus.success));
+        _getContacts();
+      },
     );
   }
 
@@ -101,8 +110,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           errorMessage: failure.message,
         ),
       ),
-      (success) =>
-          emit(state.copyWith(createUpdateContactStatus: BlocStatus.success)),
+      (success) {
+        emit(state.copyWith(createUpdateContactStatus: BlocStatus.success));
+        _getContacts();
+      },
     );
   }
 
@@ -120,8 +131,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           errorMessage: failure.message,
         ),
       ),
-      (success) =>
-          emit(state.copyWith(deleteContactStatus: BlocStatus.success)),
+      (success) {
+        emit(state.copyWith(deleteContactStatus: BlocStatus.success));
+        _getContacts();
+      },
     );
   }
 

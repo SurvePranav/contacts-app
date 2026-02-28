@@ -26,7 +26,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    context.read<HomeBloc>().add(const GetAllContactsEvent());
+    context.read<HomeBloc>()
+      ..add(const GetAllContactsEvent())
+      ..add(const GetFavouriteContactsEvent());
   }
 
   @override
@@ -84,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                           backgroundColor: AppPallete.backgroundColor,
                         ),
                         GButton(
-                          icon: Icons.favorite,
+                          icon: Icons.star_rounded,
                           text: 'Favourites',
                           backgroundColor: AppPallete.backgroundColor,
                         ),

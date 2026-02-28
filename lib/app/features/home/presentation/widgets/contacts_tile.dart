@@ -1,3 +1,5 @@
+import 'package:contacts_app/app/core/common/methods/common_methods.dart';
+import 'package:contacts_app/app/core/extensions/string_extension.dart';
 import 'package:contacts_app/app/features/home/domain/entities/contact_entity.dart';
 import 'package:contacts_app/app/features/home/presentation/pages/contact_details_page.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +12,7 @@ class ContactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      // leading: CircleAvatar(
-      //   backgroundColor: contact.color.withOpacity(0.15),
-      //   radius: 24,
-      //   child: Text(
-      //     contact.initials,
-      //     style: TextStyle(
-      //       color: contact.color,
-      //       fontWeight: FontWeight.w600,
-      //       fontSize: 15,
-      //     ),
-      //   ),
-      // ),
+
       leading: Stack(
         children: [
           CircleAvatar(
@@ -54,17 +45,17 @@ class ContactTile extends StatelessWidget {
       ),
 
       title: Text(
-        contact.name,
+        contact.name.capitalizeEachWord(),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
       ),
       subtitle: Text(contact.phone, style: const TextStyle(fontSize: 13)),
       trailing: IconButton(
-        icon: const Icon(
-          Icons.call_outlined,
-          // color: Color(0xFF5F6368),
-          size: 22,
-        ),
-        onPressed: () {},
+        icon: const Icon(Icons.call_outlined, size: 22),
+        onPressed: () {
+          CommonMethods.makeDirectCall(contact.phone);
+        },
       ),
       onTap: () {
         Navigator.of(context).push(ContactDetailsPage.route(contact));

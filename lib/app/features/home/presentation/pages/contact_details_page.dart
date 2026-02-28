@@ -1,7 +1,12 @@
+import 'package:contacts_app/app/core/common/methods/common_methods.dart';
+import 'package:contacts_app/app/core/enums/status.dart';
+import 'package:contacts_app/app/core/extensions/string_extension.dart';
 import 'package:contacts_app/app/core/theme/app_palette.dart';
 import 'package:contacts_app/app/features/home/domain/entities/contact_entity.dart';
+import 'package:contacts_app/app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:contacts_app/app/features/home/presentation/pages/create_contact_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContactDetailsPage extends StatefulWidget {
   final Contact contact;
@@ -39,7 +44,9 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              print("Delete contact confirmed");
+              context.read<HomeBloc>().add(
+                DeleteContactEvent(contactId: widget.contact.id),
+              );
             },
             child: const Text("Delete"),
           ),
@@ -58,86 +65,112 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
         children: [
           const SizedBox(height: 20),
 
-          /// Top Card
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppPallete.borderColor,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            contact.name,
-                            style: const TextStyle(
-                              fontSize: 26,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Mobile ${contact.phone}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundColor: contact.color,
-                      child: Text(
-                        contact.initials,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                /// Call Button Only
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  /// Top Card
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppPallete.borderColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    contact.name.capitalizeEachWord(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Mobile ${contact.phone}",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  if (contact.emailId != "") ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      contact.emailId,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            CircleAvatar(
+                              radius: 35,
+                              backgroundColor: contact.color,
+                              child: Text(
+                                contact.initials,
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        /// Call Button Only
+                        ElevatedButton(
+                          onPressed: () {
+                            CommonMethods.makeDirectCall(contact.phone);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.call),
+                              SizedBox(width: 12),
+                              Text("Call", style: TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.call),
-                      SizedBox(width: 12),
-                      Text("Call", style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
-              ],
+
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
-
-          const Spacer(),
 
           /// Bottom Options
           Container(
@@ -149,9 +182,15 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 /// Favourite
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isFavourite = !isFavourite;
-                    });
+                    isFavourite = !isFavourite;
+
+                    context.read<HomeBloc>().add(
+                      AddRemoveFavouriteEvent(
+                        contactId: contact.id,
+                        isFavourite: isFavourite,
+                      ),
+                    );
+                    setState(() {});
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -190,16 +229,51 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 ),
 
                 /// Delete
-                GestureDetector(
-                  onTap: _showDeleteDialog,
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.delete_outline),
-                      SizedBox(height: 6),
-                      Text("Delete", style: TextStyle(fontSize: 10)),
-                    ],
-                  ),
+                BlocConsumer<HomeBloc, HomeState>(
+                  listenWhen: (previous, current) =>
+                      previous.deleteContactStatus !=
+                      current.deleteContactStatus,
+                  listener: (context, state) {
+                    if (state.deleteContactStatus == BlocStatus.success) {
+                      // show snackbar
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Contact deleted successfully"),
+                        ),
+                      );
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    } else if (state.deleteContactStatus ==
+                        BlocStatus.failure) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            state.errorMessage ?? "Failed to delete contact",
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    final isLoading =
+                        state.deleteContactStatus == BlocStatus.loading;
+                    return GestureDetector(
+                      onTap: isLoading ? null : _showDeleteDialog,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            color: isLoading ? Colors.grey : null,
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            isLoading ? "Deleting..." : "Delete",
+                            style: TextStyle(fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

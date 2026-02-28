@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 abstract class CommonMethods {
   static String colorToString(Color color) {
@@ -19,5 +21,20 @@ abstract class CommonMethods {
       log('error parsing color: $hexString :$e');
       return Colors.white;
     }
+  }
+
+  static Future<bool> requestCallPermission() async {
+    final status = await Permission.phone.request();
+    return status.isGranted;
+  }
+
+  static Future<void> makeDirectCall(String phoneNumber) async {
+    final hasPermission = await requestCallPermission();
+
+    if (!hasPermission) {
+      throw Exception("Call permission denied");
+    }
+
+    await FlutterPhoneDirectCaller.callNumber(phoneNumber);
   }
 }
