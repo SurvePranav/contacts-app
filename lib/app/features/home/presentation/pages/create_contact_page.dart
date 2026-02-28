@@ -149,102 +149,110 @@ class _CreateContactPageState extends State<CreateContactPage> {
             SizedBox(width: 8),
           ],
         ),
-        body: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  CommonTextField(
-                    controller: _nameController,
-                    hintText: "Name",
-                    icon: Icons.person,
-                  ),
+        body: SizedBox(
+          height: MediaQuery.sizeOf(context).height,
+          child: Stack(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        CommonTextField(
+                          controller: _nameController,
+                          hintText: "Name",
+                          icon: Icons.person,
+                        ),
 
-                  const SizedBox(height: 16),
-                  CommonTextField(
-                    controller: _phoneController,
-                    hintText: "Phone",
-                    icon: Icons.phone,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 16),
-                  CommonTextField(
-                    controller: _emailController,
-                    hintText: "Email",
-                    icon: Icons.email,
-                  ),
-                ],
-              ),
-            ),
-
-            /// Bottom Buttons
-            BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                return Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: bottomInset,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                        const SizedBox(height: 16),
+                        CommonTextField(
+                          controller: _phoneController,
+                          hintText: "Phone",
+                          icon: Icons.phone,
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 16),
+                        CommonTextField(
+                          controller: _emailController,
+                          hintText: "Email",
+                          icon: Icons.email,
+                        ),
+                        const SizedBox(height: 80),
+                      ],
                     ),
-                    color: AppPallete.borderColor,
-                    child: SafeArea(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppPallete.borderColor,
-                                elevation: 0,
-                              ),
-                              onPressed:
-                                  state.createUpdateContactStatus ==
-                                      BlocStatus.loading
-                                  ? null
-                                  : () {
-                                      Navigator.of(context).pop();
-                                    },
-                              child: const Text(
-                                "Cancel",
-                                style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+
+              /// Bottom Buttons
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  return Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: bottomInset,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      color: AppPallete.borderColor,
+                      child: SafeArea(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppPallete.borderColor,
+                                  elevation: 0,
+                                ),
+                                onPressed:
+                                    state.createUpdateContactStatus ==
+                                        BlocStatus.loading
+                                    ? null
+                                    : () {
+                                        Navigator.of(context).pop();
+                                      },
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppPallete.borderColor,
-                                elevation: 0,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppPallete.borderColor,
+                                  elevation: 0,
+                                ),
+                                onPressed:
+                                    state.createUpdateContactStatus ==
+                                        BlocStatus.loading
+                                    ? null
+                                    : _onSave,
+                                child:
+                                    state.createUpdateContactStatus ==
+                                        BlocStatus.loading
+                                    ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Text(
+                                        widget.isUpdating ? "Update" : "Save",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
                               ),
-                              onPressed:
-                                  state.createUpdateContactStatus ==
-                                      BlocStatus.loading
-                                  ? null
-                                  : _onSave,
-                              child:
-                                  state.createUpdateContactStatus ==
-                                      BlocStatus.loading
-                                  ? CircularProgressIndicator(
-                                      color: Colors.white,
-                                    )
-                                  : Text(
-                                      widget.isUpdating ? "Update" : "Save",
-                                      style: TextStyle(fontSize: 18),
-                                    ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
