@@ -153,34 +153,32 @@ class _CreateContactPageState extends State<CreateContactPage> {
           height: MediaQuery.sizeOf(context).height,
           child: Stack(
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        CommonTextField(
-                          controller: _nameController,
-                          hintText: "Name",
-                          icon: Icons.person,
-                        ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      CommonTextField(
+                        controller: _nameController,
+                        hintText: "Name",
+                        icon: Icons.person,
+                      ),
 
-                        const SizedBox(height: 16),
-                        CommonTextField(
-                          controller: _phoneController,
-                          hintText: "Phone",
-                          icon: Icons.phone,
-                          keyboardType: TextInputType.phone,
-                        ),
-                        const SizedBox(height: 16),
-                        CommonTextField(
-                          controller: _emailController,
-                          hintText: "Email",
-                          icon: Icons.email,
-                        ),
-                        const SizedBox(height: 80),
-                      ],
-                    ),
+                      const SizedBox(height: 16),
+                      CommonTextField(
+                        controller: _phoneController,
+                        hintText: "Phone",
+                        icon: Icons.phone,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 16),
+                      CommonTextField(
+                        controller: _emailController,
+                        hintText: "Email",
+                        icon: Icons.email,
+                      ),
+                      const SizedBox(height: 80),
+                    ],
                   ),
                 ),
               ),
